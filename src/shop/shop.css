@@ -1,0 +1,485 @@
+/* ============================================================================
+   PORP — one sweatshirt.
+
+   The page is the client's porp_font.svg at browser scale: an Ink field of
+   fitted phrase-rows, with every content block knocked out of it as an opaque
+   Paper hole. The field row that would pass through each block's centre is
+   deleted outright, leaving a clear Ink band that runs out into the margins —
+   which is exactly what that file does at its seventh line, where one row is
+   removed so the porpoise can sit there.
+
+   Every colour and measurement below traces to assets/img/isoporp.svg or
+   images/porp_font.svg. Nothing here is decorative.
+   ========================================================================= */
+
+:root{
+  --ink:      #231f20;             /* porp_font.svg <rect fill> + every stroke */
+  --paper:    #ffffff;             /* porp_font.svg text fill; isoporp body fill */
+  --shadow:   rgba(35,31,32,.30);  /* isoporp.svg shadow opacity */
+  --dim-ink:  #656263;             /* ink @70% over paper — TEXT ON PAPER ONLY, 6.03:1 */
+  --dim-pap:  #bdbcbc;             /* ink @30% over paper — TEXT ON INK ONLY, 8.59:1 */
+  --scrim:    rgba(35,31,32,.72);  /* decision, not derived: a scrim occludes */
+
+  --display: 'Outfit', system-ui, sans-serif;
+  --body: 'Archivo', system-ui, sans-serif;
+
+  /* spacing — multiples of the 3px line, nothing else */
+  --s3:3px; --s6:6px; --s12:12px; --s18:18px; --s24:24px;
+  --s36:36px; --s48:48px; --s64:64px; --s96:96px;
+
+  --line: 3px;
+  --header-h: 64px;
+  --pitch: 111px;                  /* JS overwrites with the measured row pitch */
+
+  font-synthesis: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; }
+html{ scroll-behavior:smooth; }
+@media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } }
+
+body{
+  background:var(--ink);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Everything is drawn with a 3px pen and a hard corner. The artwork supplies
+   all the roundness on this page; the interface must not compete with it. */
+button,input,select,textarea{ font:inherit; color:inherit; border-radius:0; }
+img,svg{ display:block; max-width:100%; }
+h1,h2,h3,p,dl,dd,figure{ margin:0; }
+ul{ margin:0; padding:0; list-style:none; }
+a{ color:inherit; }
+
+.vh{
+  position:absolute!important; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; border:0;
+}
+
+/* ── focus: one ring that survives all four grounds ───────────────────────
+   Paper 0–3px out, Ink 3–6px out. On Paper the Ink ring reads; on Ink the
+   Paper ring reads; on an Ink-filled button the Ink ring reads.            */
+:where(a,button,[role=radio],input,summary):focus-visible{
+  outline:3px solid transparent;                /* forced-colours mode */
+  outline-offset:0;
+  box-shadow:0 0 0 3px var(--paper), 0 0 0 6px var(--ink);
+  position:relative; z-index:5;
+}
+
+.skip{
+  position:absolute; left:var(--s12); top:var(--s12); z-index:100;
+  transform:translateY(-200%);
+  background:var(--paper); border:var(--line) solid var(--ink);
+  padding:var(--s12) var(--s18);
+  font-family:var(--body); font-weight:600; font-size:13px;
+  letter-spacing:.12em; text-transform:uppercase; text-decoration:none;
+}
+.skip:focus{ transform:none; }
+
+/* ── type roles ───────────────────────────────────────────────────────── */
+.h1,.h2,.h3,.price,.cta,.chip,.header__mark,.foot__mark,.subtotal__n,.stickybar__name{
+  font-family:var(--display); font-weight:900;
+}
+.h1{ font-size:44px; line-height:.98; letter-spacing:.02em; text-transform:uppercase; }
+.h2{ font-size:26px; line-height:1.10; letter-spacing:.04em; text-transform:uppercase; }
+.h3{ font-size:26px; line-height:1.10; letter-spacing:.04em; text-transform:uppercase; }
+.price{ font-size:30px; line-height:1; letter-spacing:.01em; margin-top:var(--s12); }
+.lead{ font-weight:500; font-size:19px; line-height:1.45; margin-top:var(--s18); max-width:62ch; }
+.body{ font-size:16px; line-height:1.6; max-width:62ch; }
+.note{ font-size:14px; line-height:1.5; color:var(--dim-ink); max-width:62ch; }
+.micro{ font-size:14px; line-height:1.5; color:var(--dim-ink); margin-top:var(--s18); }
+.label{
+  display:block; font-weight:600; font-size:12px; line-height:1.2;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--dim-ink);
+}
+.rule{ border:0; border-top:var(--line) solid var(--ink); margin:var(--s36) 0; }
+
+/* ── header ───────────────────────────────────────────────────────────── */
+.header{
+  position:sticky; top:0; z-index:40;
+  display:flex; align-items:center; justify-content:space-between;
+  height:var(--header-h); padding:0 var(--s24);
+  background:var(--paper); border-bottom:var(--line) solid var(--ink);
+}
+/* The drawing is never used below 120px — at header scale its eyes and smile
+   collapse into sub-pixel noise. The wordmark carries the brand here. */
+.header__mark{ font-size:16px; letter-spacing:.12em; text-transform:uppercase; text-decoration:none; }
+.cartbtn{
+  height:40px; padding:0 var(--s18); background:var(--paper);
+  border:var(--line) solid var(--ink); cursor:pointer;
+  font-weight:600; font-size:13px; letter-spacing:.12em; text-transform:uppercase;
+}
+.cartbtn:hover:not(:focus-visible){ box-shadow:inset 0 0 0 var(--line) var(--ink); }
+.cartbtn:active,.cartbtn.is-pressed{ background:var(--ink); color:var(--paper); }
+
+/* ── the sheet: field behind, blocks knocked out of it ────────────────── */
+.sheet{ position:relative; }
+
+.field{ position:absolute; inset:0; z-index:0; background:var(--ink); overflow:hidden; }
+.field__rows{ padding-inline:4.85vw; }        /* the file's 38/782 margin */
+.field__row{
+  display:block;
+  font-family:var(--display); font-weight:900;
+  color:var(--paper);
+  font-size:var(--field-fs, clamp(20px, 6.16vw, 88px));
+  line-height:1.403;                          /* the file's 67.76/48.3 pitch */
+  letter-spacing:.08em;                       /* the file's tracking, fixed */
+  /* Calibrated against both of the client's measures: this renders a word gap
+     of 0.397em (the file's 0.3956em) and a phrase of 14.30em (the file's
+     14.64em, within tolerance). Adjust this only — letter-spacing is the
+     brand's and is fixed at .08em. */
+  word-spacing:.155em;
+  white-space:nowrap;
+}
+/* THE DELETED ROW. visibility, never display — the row must keep its height
+   or every row beneath it shifts and the field's rhythm collapses. */
+.field__row[data-cut]{ visibility:hidden; }
+
+.column{
+  position:relative; z-index:1;
+  width:min(920px, 100vw - 192px);            /* ≥96px of field each side */
+  margin-inline:auto;
+  padding-block:var(--s96);
+  display:flex; flex-direction:column; gap:var(--s96);
+}
+main{ display:flex; flex-direction:column; gap:var(--s96); }
+
+.block{
+  position:relative;
+  background:var(--paper);
+  border:var(--line) solid var(--ink);
+  padding:var(--s48);
+  scroll-margin-top:calc(var(--header-h) + var(--s24));
+}
+.block > .h2{ margin-bottom:var(--s24); }
+.block > .h2:focus-visible{ box-shadow:0 0 0 3px var(--paper),0 0 0 6px var(--ink); }
+
+/* ── buy block ────────────────────────────────────────────────────────── */
+.block--buy{ padding-top:var(--s96); }
+
+/* One object, both readings of the palette, no code: over Paper its Ink
+   strokes read black-on-white and its 30% shadow reads grey; over the Ink
+   field the same strokes vanish into the ground and it becomes a pure white
+   silhouette. Both are the client's own files, at once, on one object. */
+.sticker{
+  position:absolute; top:0; left:var(--s48);
+  width:196px; transform:translateY(-50%);
+  z-index:2; pointer-events:none;
+}
+.sticker svg{ width:100%; height:auto; color:var(--ink); overflow:visible; }
+.sticker svg [stroke]{ stroke-width:3px; }
+
+.buy{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s48); align-items:start; }
+.buy__art{ width:100%; }
+.buy__art svg{ width:100%; height:auto; color:var(--ink); }
+
+.sizes{ border:0; margin:0; padding:0; }
+.sizes__grid{ display:grid; grid-template-columns:repeat(6,1fr); gap:var(--s3); margin-top:var(--s12); }
+.chip{
+  height:52px; display:flex; align-items:center; justify-content:center;
+  background:var(--paper); border:var(--line) solid var(--ink); color:var(--ink);
+  font-size:16px; letter-spacing:.04em; text-transform:uppercase; cursor:pointer;
+  transition:none;                            /* a cut has no in-between state */
+  user-select:none;
+}
+.chip:hover:not([aria-disabled=true]):not(:focus-visible){ box-shadow:inset 0 0 0 var(--line) var(--ink); }
+.chip:active,.chip.is-pressed{ background:var(--ink); color:var(--paper); }
+.chip[aria-checked=true]{ background:var(--ink); color:var(--paper); }
+.chip[aria-disabled=true]{
+  background:var(--dim-pap); color:var(--ink); cursor:not-allowed;
+  background-image:linear-gradient(to top right,
+    transparent calc(50% - 1.5px), var(--ink) calc(50% - 1.5px),
+    var(--ink) calc(50% + 1.5px), transparent calc(50% + 1.5px));
+}
+
+/* The error is announced by position and structure, not by colour — which is
+   the only honest option in a palette with no red. */
+.sizeerr{
+  border-left:var(--line) solid var(--ink); background:var(--paper);
+  padding:var(--s12) var(--s18); margin-bottom:var(--s18);
+  font-weight:500; font-size:15px;
+}
+
+.txtbtn{
+  display:inline-block; margin-top:var(--s18);
+  font-weight:600; font-size:13px; letter-spacing:.12em; text-transform:uppercase;
+  text-decoration:none; border-bottom:var(--line) solid transparent;
+  background:none; border-left:0; border-right:0; border-top:0; padding:0; cursor:pointer;
+}
+.txtbtn:hover{ border-bottom-color:var(--ink); }
+
+.qtyrow{ margin-top:var(--s36); }
+.stepper{ display:inline-flex; border:var(--line) solid var(--ink); margin-top:var(--s12); }
+.stepper__btn{
+  width:48px; height:48px; display:flex; align-items:center; justify-content:center;
+  position:relative; background:var(--paper); border:0; cursor:pointer; color:var(--ink);
+}
+.stepper__btn + .stepper__n{ border-left:var(--line) solid var(--ink); }
+.stepper__n{
+  min-width:64px; height:48px; display:flex; align-items:center; justify-content:center;
+  border-right:var(--line) solid var(--ink);
+  font-weight:500; font-size:16px; font-variant-numeric:tabular-nums;
+}
+/* the glyphs: 18×3 Ink bars with a 1.5px radius — which is what a round cap
+   on a 3px line is, and the only roundness the interface is allowed */
+.stepper__btn::before,.stepper__btn--plus::after{
+  content:''; position:absolute; width:18px; height:3px;
+  background:currentColor; border-radius:1.5px;
+}
+.stepper__btn--plus::after{ transform:rotate(90deg); }
+.stepper__btn:hover:not(:disabled):not(:focus-visible){ box-shadow:inset 0 0 0 var(--line) var(--ink); }
+.stepper__btn:active:not(:disabled),.stepper__btn.is-pressed{ background:var(--ink); color:var(--paper); }
+.stepper__btn:disabled{ background:var(--dim-pap); cursor:not-allowed; }
+
+/* ── the one shadowed block ───────────────────────────────────────────── */
+.cta{
+  display:block; width:100%; height:60px; margin-top:var(--s24);
+  background:var(--ink); color:var(--paper); border:var(--line) solid var(--ink);
+  font-size:15px; letter-spacing:.09em; text-transform:uppercase; cursor:pointer;
+  box-shadow:-1px 9px 0 var(--shadow);        /* isoporp's dx −2/dy +17.2 at 0.5 */
+  transition:transform 120ms linear, box-shadow 120ms linear;
+}
+/* the travel is exactly the shadow's offset, so the box never changes size and
+   the top edge lands where the shadow's top edge was: an object touching down */
+.cta:active,.cta.is-pressed{
+  transform:translate(-1px,9px); box-shadow:none;
+  transition-duration:90ms;
+}
+.cta:focus-visible{
+  box-shadow:0 0 0 3px var(--paper),0 0 0 6px var(--ink),-1px 9px 0 var(--shadow);
+}
+.block--buy .cta{ margin-bottom:9px; }        /* reserve the shadow */
+
+/* ── the drawings ─────────────────────────────────────────────────────── */
+.views{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s24); }
+.view__frame{ border:var(--line) solid var(--ink); background:var(--paper); aspect-ratio:800/760; }
+.view__frame svg{ width:100%; height:100%; color:var(--ink); }
+.view__cap{
+  border-top:var(--line) solid var(--ink); padding:var(--s12) var(--s18);
+  font-weight:600; font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+}
+.views li{ border:var(--line) solid var(--ink); }
+.views li .view__frame{ border:0; }
+/* Non-scaling strokes, so the drawn line is a constant CSS pixel value at every
+   frame size and never thins to a hairline on a phone or slabs out on 4K.
+   `vector-effect` does NOT inherit and the <g> wrappers paint nothing, so it has
+   to land on the elements that actually draw — hence the descendant `*`.
+   Everything here is the page's one 3px pen. */
+.view__frame svg *,.buy__art svg *,.sticker svg *,.empty svg *{
+  vector-effect:non-scaling-stroke;
+}
+.view__frame svg [stroke],.buy__art svg [stroke]{ stroke-width:3px; }
+
+/* The coda is deliberately excluded: it reproduces the client's 392-wide
+   drawing at its native scale, where the file's own 6-unit pen is the point.
+   It is artwork, not interface, and it scales like artwork. */
+.view__frame svg text{ font-family:var(--display); }
+
+/* ── details: a <dl>, because that is what this content is ────────────── */
+.spec{ display:grid; grid-template-columns:160px 1fr; }
+.spec dt{
+  font-weight:600; font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--dim-ink); padding:var(--s18) var(--s18) var(--s18) 0;
+}
+.spec dd{ padding:var(--s18) 0; }
+.spec dt:not(:first-of-type),.spec dd:not(:first-of-type){ border-top:1px solid var(--ink); }
+
+/* ── tables ───────────────────────────────────────────────────────────── */
+.table{ width:100%; border-collapse:collapse; border:var(--line) solid var(--ink); margin-top:var(--s24); }
+.table th,.table td{ text-align:left; padding:0 var(--s18); height:52px; }
+.table thead th{
+  font-weight:600; font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+  border-bottom:var(--line) solid var(--ink);
+}
+.table tbody th,.table tbody td{ font-weight:500; font-size:15px; font-variant-numeric:tabular-nums; }
+.table tbody tr:not(:first-child) th,.table tbody tr:not(:first-child) td{ border-top:1px solid var(--ink); }
+/* right-aligned numerics — a right-aligned column cannot misalign on a
+   varying trailing glyph, which is what makes the ½ a non-issue */
+.table .num{ text-align:right; }
+.table .stock{
+  text-align:right; font-weight:600; font-size:12px;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--dim-ink);
+}
+.table + .note{ margin-top:var(--s24); }
+
+/* ── returns / care ───────────────────────────────────────────────────── */
+.pair{ display:grid; grid-template-columns:1fr 1fr; gap:var(--s48); }
+.pair p,.pair ul{ margin-top:var(--s18); }
+.care li + li{ margin-top:var(--s12); }
+
+/* ── questions: static pairs. No accordion, nothing to expand. ─────────── */
+.faq__q{ font-weight:600; font-size:18px; line-height:1.35; }
+.faq__a{ font-size:16px; line-height:1.6; max-width:62ch; margin-top:var(--s12); }
+.faq__item{ padding:28px 0; }
+.faq__item:first-child{ padding-top:0; }
+.faq__item:last-child{ padding-bottom:0; }
+.faq__item + .faq__item{ border-top:1px solid var(--ink); }
+
+/* ── footer ───────────────────────────────────────────────────────────── */
+/* every word sits inside the block — nothing is ever set directly on the
+   field, which is what would put the only support channel white-on-white */
+.block--foot{ padding:var(--s36) var(--s48); }
+.foot{ display:flex; flex-wrap:wrap; align-items:center; gap:var(--s12) var(--s24); }
+.foot__mark{ font-size:20px; letter-spacing:.12em; text-transform:uppercase; }
+.foot__mail{ font-size:14px; }
+.foot__nav{ display:flex; gap:var(--s18); margin-left:auto; }
+.foot__nav a,.foot__mail{
+  font-weight:600; font-size:13px; letter-spacing:.12em; text-transform:uppercase;
+  text-decoration:none; border-bottom:var(--line) solid transparent;
+}
+.foot__nav a:hover,.foot__mail:hover{ border-bottom-color:var(--ink); }
+.foot__c{ font-size:13px; color:var(--dim-ink); }
+
+/* ── coda: the client's 782 square, reconstructed live ────────────────── */
+.coda{
+  position:relative; z-index:1;
+  height:calc(var(--pitch) * 5);
+  display:grid; place-items:center;
+}
+.coda svg{ width:392px; max-width:60vw; height:auto; color:var(--ink); }
+
+/* ── sticky buy bar ───────────────────────────────────────────────────── */
+/* present or absent, never animated in — a bar that slides in on scroll is a
+   scroll animation, and this page has none */
+.stickybar{
+  position:fixed; left:0; right:0; bottom:0; z-index:45;
+  display:flex; align-items:center; gap:var(--s24);
+  height:var(--s64); padding:0 var(--s24);
+  background:var(--paper); border-top:var(--line) solid var(--ink);
+}
+.stickybar[hidden]{ display:none; }
+.stickybar__what{ font-size:14px; }
+.stickybar__name{ font-size:15px; text-transform:uppercase; letter-spacing:.02em; }
+.stickybar__cta{ width:auto; min-width:220px; height:44px; margin:0 0 0 auto; flex:none; }
+
+/* ── cart ─────────────────────────────────────────────────────────────── */
+.scrim{ position:fixed; inset:0; z-index:50; background:var(--scrim); }
+.scrim[hidden]{ display:none; }
+.drawer{
+  position:fixed; top:0; right:0; z-index:60;
+  width:min(420px,100vw); height:100dvh;
+  background:var(--paper); border-left:var(--line) solid var(--ink);
+  display:flex; flex-direction:column;
+  transform:translateX(0);
+  transition:transform 200ms cubic-bezier(.2,0,0,1);
+}
+.drawer[hidden]{ display:none; }
+.drawer.is-closed{ transform:translateX(100%); }
+.drawer__head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:var(--s24); border-bottom:var(--line) solid var(--ink); flex:none;
+}
+.drawer__body{ flex:1; overflow-y:auto; padding:var(--s24); }
+.drawer__foot{ flex:none; padding:var(--s24); border-top:var(--line) solid var(--ink); }
+.drawer__undo{ padding:var(--s12) var(--s24); border-bottom:1px solid var(--ink); }
+.drawer__undo[hidden]{ display:none; }
+
+.close{
+  width:40px; height:40px; position:relative; flex:none;
+  background:var(--paper); border:var(--line) solid var(--ink); cursor:pointer; color:var(--ink);
+}
+.close::before,.close::after{
+  content:''; position:absolute; top:50%; left:50%; width:18px; height:3px;
+  background:currentColor; border-radius:1.5px;
+}
+.close::before{ transform:translate(-50%,-50%) rotate(45deg); }
+.close::after{ transform:translate(-50%,-50%) rotate(-45deg); }
+.close:hover:not(:focus-visible){ box-shadow:inset 0 0 0 var(--line) var(--ink); }
+.close:active,.close.is-pressed{ background:var(--ink); color:var(--paper); }
+
+.line{ padding:var(--s18) 0; }
+.line + .line{ border-top:1px solid var(--ink); }
+.line__name{ font-family:var(--display); font-weight:900; font-size:16px; text-transform:uppercase; }
+.line__size{ font-weight:600; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim-ink); margin-top:var(--s3); }
+.line__row{ display:flex; align-items:center; gap:var(--s12); margin-top:var(--s12); flex-wrap:wrap; }
+.line__total{ margin-left:auto; font-weight:500; font-variant-numeric:tabular-nums; }
+.line .stepper__btn{ width:40px; height:40px; }
+.line .stepper__n{ min-width:48px; height:40px; }
+
+.empty{ text-align:center; padding:var(--s64) 0; }
+.empty svg{ width:120px; margin:0 auto var(--s24); color:var(--dim-pap); }
+.empty svg [stroke]{ vector-effect:non-scaling-stroke; stroke-width:3px; }
+
+.subtotal{ display:flex; align-items:baseline; justify-content:space-between; }
+.subtotal__n{ font-size:30px; font-variant-numeric:tabular-nums; }
+.notwired{
+  border:var(--line) solid var(--ink); padding:var(--s18);
+  margin-top:var(--s24); font-size:15px; line-height:1.5;
+}
+
+/* ── responsive ───────────────────────────────────────────────────────── */
+@media (max-width:1023px){
+  .h1{ font-size:36px; } .h2,.h3{ font-size:24px; } .price{ font-size:28px; }
+  .lead{ font-size:18px; }
+  .block{ padding:40px; }
+  .block--buy{ padding-top:80px; }
+  .sticker{ width:150px; left:40px; }
+  .column{ padding-block:72px; gap:72px; }
+  main{ gap:72px; }
+}
+/* The transaction column needs room before the drawing earns its half. Below
+   this the two columns crowd and the H1 breaks to three lines. */
+@media (max-width:880px){
+  .buy{ grid-template-columns:1fr; gap:var(--s36); }
+}
+@media (max-width:767px){
+  .cta{ height:56px; }
+  .pair{ grid-template-columns:1fr; gap:var(--s36); }
+  .spec{ grid-template-columns:1fr; }
+  .spec dd{ padding-top:0; }
+  .spec dt:not(:first-of-type){ border-top:1px solid var(--ink); }
+  .spec dd:not(:first-of-type){ border-top:0; }
+}
+@media (max-width:640px){
+  :root{ --header-h:56px; --s96:64px; }
+  .h1{ font-size:30px; } .h2,.h3{ font-size:21px; } .price{ font-size:26px; }
+  .lead{ font-size:17px; }
+  /* full-bleed: the field is then read in the gaps between blocks, where
+     complete rows show and the deleted-row idea becomes the gap itself */
+  .column{ width:100%; padding-block:var(--s64); gap:var(--s64); }
+  main{ gap:var(--s64); }
+  .block{ padding:20px; border-left:0; border-right:0; }
+  .block--buy{ padding-top:var(--s64); }
+  .sticker{ width:120px; left:20px; }
+  .block--foot{ padding:var(--s24) 20px; }
+  .chip{ height:48px; }              /* 16px type is fixed: §7.2's one-row fit depends on it */
+  .faq__q{ font-size:17px; }
+  .header__mark{ font-size:15px; }
+  .foot__mark{ font-size:18px; }
+  .table th,.table td{ padding:0 var(--s12); height:48px; font-size:14px; }
+  .table .stock{ display:none; }
+  .foot__nav{ margin-left:0; }
+  .stickybar{ height:calc(72px + env(safe-area-inset-bottom)); padding-bottom:env(safe-area-inset-bottom); }
+  .stickybar__name{ display:none; }
+  .stickybar__cta{ min-width:0; width:60%; }
+  /* drawings become a snap row with the next item's edge as the affordance */
+  .views{
+    display:flex; gap:var(--s12); overflow-x:auto;
+    scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch;
+  }
+  .views li{ flex:0 0 78%; scroll-snap-align:start; }
+  .drawer{
+    top:auto; bottom:0; right:0; width:100vw; height:auto; max-height:88dvh;
+    border-left:0; border-top:var(--line) solid var(--ink);
+  }
+  .drawer.is-closed{ transform:translateY(100%); }
+  .coda svg{ max-width:70vw; }
+}
+
+/* ── motion ───────────────────────────────────────────────────────────── */
+/* Nothing animates on scroll. Three motions exist: the press, the drawer,
+   and — deliberately — nothing at all on size selection. */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{ transition-duration:.01ms!important; animation-duration:.01ms!important; }
+  .cta:active,.cta.is-pressed{
+    transform:none;                                 /* not a 9px teleport */
+    box-shadow:inset 0 0 0 var(--line) var(--paper);
+  }
+  .drawer,.drawer.is-closed{ transform:none; }
+}

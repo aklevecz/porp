@@ -1,44 +1,190 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <script src="https://d3js.org/d3.v4.js"></script>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-    <!-- <link rel="icon" href="assets/favicons/favicon.png" type="image/png"> -->
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/touch-icon-114x114.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/touch-icon-72x72.png">
-    <link rel="apple-touch-icon-precomposed" sizes="57x57" href="images/touch-icon-57x57.png">
-    <link rel="apple-touch-icon-precomposed" href="images/touch-icon-57x57.png">
-    <!-- <link rel="stylesheet" type="text/css" href="./assets/css/reset.css">
-    <link rel="stylesheet" type="text/css" href="./assets/css/style.css">
-    <link rel="stylesheet" type="text/css" href="./assets/css/cleanup.css"> -->
-    <meta name="description" content="">
-    <title></title>
-  </head>
-  <body style="background:black">
-    <div id="container" style="width:100%; height:100%; overflow:hidden"></div>
-    <div id="nosupport" style="display:none">
-      <div id="fallbackBg"></div>
-      <div id="fallbackMessageStock"></div>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Porpoise Crop Hoodie — PORP</title>
+<meta name="description" content="425 gsm of organic cotton loopback, cut short, hood lined, printed on the chest. It is the only thing we make.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta property="og:title" content="The Porpoise Crop Hoodie">
+<meta property="og:description" content="425 gsm of organic cotton loopback, cut short, hood lined, printed on the chest. It is the only thing we make.">
+<meta property="og:type" content="product">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Outfit:wght@900&display=swap">
+<link rel="stylesheet" href="/src/shop/shop.css">
+</head>
+<body>
+
+<a class="skip" href="#buy">Skip to the hoodie</a>
+
+<header class="header">
+  <a class="header__mark" href="/">PORP</a>
+  <button type="button" class="cartbtn" data-cart-open aria-label="Cart, empty">
+    CART (<span data-cart-count>0</span>)
+  </button>
+</header>
+
+<div class="sheet">
+
+  <div class="field" role="img" aria-label="The words YOU HAVE NO PORPOISE, set once per line and repeated down the page.">
+    <div class="field__rows" data-rows aria-hidden="true"></div>
+  </div>
+
+  <div class="column">
+    <main id="main">
+
+      <!-- ── BUY ─────────────────────────────────────────────────────────── -->
+      <section class="block block--buy" id="buy" data-block>
+        <div class="sticker" data-sticker aria-hidden="true"><!--@sticker--></div>
+        <div class="buy">
+          <div class="buy__side">
+            <h1 class="h1">The Porpoise Crop Hoodie</h1>
+            <p class="price"><!--@price--></p>
+            <p class="lead">425 gsm of organic cotton loopback, cut short, hood lined, printed on the chest. It is the only thing we make.</p>
+
+            <hr class="rule">
+
+            <div data-size-error-slot></div>
+
+            <fieldset class="sizes">
+              <legend class="label" id="size-label">Size</legend>
+              <div class="sizes__grid" role="radiogroup" aria-labelledby="size-label" data-sizes><!--@sizes--></div>
+            </fieldset>
+
+            <a class="txtbtn" href="#size-guide" data-sizeguide-link>Size guide ↓</a>
+
+            <div class="qtyrow">
+              <span class="label" id="qty-label">Qty</span>
+              <div class="stepper" data-stepper>
+                <button type="button" class="stepper__btn stepper__btn--minus" data-qty-dec aria-label="One fewer" disabled></button>
+                <span class="stepper__n" data-qty aria-live="off">1</span>
+                <button type="button" class="stepper__btn stepper__btn--plus" data-qty-inc aria-label="One more"></button>
+              </div>
+            </div>
+
+            <button type="button" class="cta press" data-add>Add to cart</button>
+            <p class="micro">Free shipping in the US. 30 days to change your mind.</p>
+          </div>
+
+          <div class="buy__art view" data-art="front"><!--@front--></div>
+        </div>
+      </section>
+
+      <!-- ── THE DRAWINGS ─────────────────────────────────────────────────── -->
+      <section class="block" id="hoodie" data-block>
+        <h2 class="h2">The hoodie</h2>
+        <ul class="views" data-views><!--@views--></ul>
+      </section>
+
+      <!-- ── DETAILS ──────────────────────────────────────────────────────── -->
+      <section class="block" id="details" data-block>
+        <h2 class="h2">The details</h2>
+        <dl class="spec" data-specs><!--@specs--></dl>
+      </section>
+
+      <!-- ── SIZE GUIDE ───────────────────────────────────────────────────── -->
+      <section class="block" id="size-guide" data-block>
+        <h2 class="h2" tabindex="-1">Size guide</h2>
+        <p class="note">Measured flat, in inches. Chest is pit to pit. Length is high shoulder to hem, and it is meant to be short.</p>
+        <table class="table table--sizes">
+          <caption class="vh">Garment measurements in inches</caption>
+          <thead>
+            <tr>
+              <th scope="col">Size</th>
+              <th scope="col" class="num">Chest</th>
+              <th scope="col" class="num">Length</th>
+              <th scope="col" class="num">Sleeve</th>
+              <th scope="col" class="stock">Stock</th>
+            </tr>
+          </thead>
+          <tbody data-sizetable><!--@sizetable--></tbody>
+        </table>
+        <p class="note">Boxy and cropped on purpose. Take your normal size; go up one for more room through the body and a shorter hem.</p>
+      </section>
+
+      <!-- ── SHIPPING ─────────────────────────────────────────────────────── -->
+      <section class="block" id="shipping" data-block>
+        <h2 class="h2">Shipping</h2>
+        <table class="table">
+          <caption class="vh">Shipping destinations, times and cost</caption>
+          <thead>
+            <tr>
+              <th scope="col">Where</th>
+              <th scope="col">How long</th>
+              <th scope="col" class="num">Cost</th>
+            </tr>
+          </thead>
+          <tbody data-shiptable><!--@shiptable--></tbody>
+        </table>
+      </section>
+
+      <!-- ── RETURNS / CARE ───────────────────────────────────────────────── -->
+      <section class="block" id="returns" data-block>
+        <div class="pair">
+          <div>
+            <h3 class="h3">Returns</h3>
+            <p class="body">Within 30 days, unworn and unwashed, for any reason or none. We pay return shipping inside the US.</p>
+          </div>
+          <div>
+            <h3 class="h3">Care</h3>
+            <ul class="care" data-care><!--@care--></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── QUESTIONS ────────────────────────────────────────────────────── -->
+      <section class="block" id="questions" data-block>
+        <h2 class="h2">Questions</h2>
+        <div class="faq" data-faq><!--@faq--></div>
+      </section>
+    </main>
+
+    <footer class="block block--foot" data-block>
+      <div class="foot">
+        <span class="foot__mark">PORP</span>
+        <a class="foot__mail" href="mailto:hello@youhavenoporpoise.com">hello@youhavenoporpoise.com</a>
+        <nav class="foot__nav" aria-label="Page sections">
+          <a href="#size-guide">Size guide</a>
+          <a href="#shipping">Shipping</a>
+          <a href="#questions">Questions</a>
+        </nav>
+        <span class="foot__c">© 2026</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- the client's 782 square, reconstructed: the sentence closing back over -->
+  <div class="coda" data-block data-coda aria-hidden="true"><!--@coda--></div>
+</div>
+
+<!-- ── STICKY BUY BAR ─────────────────────────────────────────────────────── -->
+<div class="stickybar" data-stickybar hidden>
+  <p class="stickybar__what"><span class="stickybar__name">The Porpoise Crop Hoodie&nbsp;· </span><!--@price--> · <span data-sticky-size>Pick a size</span></p>
+  <button type="button" class="cta press stickybar__cta" data-add>Add to cart</button>
+</div>
+
+<!-- ── CART ───────────────────────────────────────────────────────────────── -->
+<div class="scrim" data-scrim hidden></div>
+<aside class="drawer" data-drawer role="dialog" aria-modal="true" aria-labelledby="cart-title" hidden>
+  <div class="drawer__head">
+    <h2 class="h2" id="cart-title" tabindex="-1">Cart</h2>
+    <button type="button" class="close" data-cart-close aria-label="Close cart"></button>
+  </div>
+  <div class="drawer__undo" data-undo hidden></div>
+  <div class="drawer__body" data-cart-body></div>
+  <div class="drawer__foot" data-cart-foot hidden>
+    <div class="subtotal">
+      <span class="label">Subtotal</span>
+      <span class="subtotal__n" data-subtotal>$0</span>
     </div>
-    <noscript>
-      <div id="fallbackBg"></div>
-      <div id="fallbackMessageNoJS"></div>
-    </noscript>
-    <!--if lte IE 8
-    script.
-      window.location = 'fallback.html';
-    -->
-    <!--if !lte IE 8| [if !lte IE 8]
-    -->
-    <script src="./javascripts/require.js" data-main="./javascripts/nebulon_porp.js"></script>
-    <script>
-      var ENV = window.ENV = {};
-      window.ENV = {};
-    </script>
-    <!-- [endif]-->
-  </body>
+    <p class="micro">Shipping — free in the US, see the table.</p>
+    <div data-checkout-slot></div>
+  </div>
+</aside>
+
+<div role="status" aria-live="polite" class="vh" data-status></div>
+
+<script type="module" src="/src/shop/main.js"></script>
+</body>
 </html>

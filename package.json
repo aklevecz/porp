@@ -1,0 +1,26 @@
+{
+  "name": "porp",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aklevecz/porp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aklevecz/porp/issues"
+  },
+  "homepage": "https://github.com/aklevecz/porp#readme",
+  "dependencies": {
+    "three": "^0.183.2",
+    "vite": "^8.0.1"
+  }
+}
