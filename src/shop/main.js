@@ -1,7 +1,7 @@
 import { PRODUCT } from './product.js';
 import { Cart, money, MAX_PER_SIZE } from './cart.js';
 import { isConfigured, checkoutUrl } from './checkout.js';
-import { MARK } from './art.js';
+import { MARK, GARMENT_MARK } from './art.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -268,11 +268,9 @@ function renderCart() {
   }
 
   foot.hidden = false;
-  // No thumbnail: at 56px the porpoise's eyes and smile turn to noise, and in a
-  // shop with one product a picture of that product tells you nothing you did
-  // not already know from the words next to it.
   body.innerHTML = snap.lines.map((l) => `
     <div class="line">
+      <div class="line__thumb">${GARMENT_MARK}</div>
       <div>
         <p class="line__name">${PRODUCT.name}</p>
         <p class="line__size">Size ${l.size}</p>

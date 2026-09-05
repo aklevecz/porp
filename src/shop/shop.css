@@ -393,7 +393,15 @@ main{ display:flex; flex-direction:column; gap:var(--s96); }
 .close:hover:not(:focus-visible){ box-shadow:inset 0 0 0 var(--line) var(--ink); }
 .close:active,.close.is-pressed{ background:var(--ink); color:var(--paper); }
 
-.line{ padding:var(--s18) 0; }
+/* The thumb is a Paper block with the page's 3px frame, like every other
+   block — and the garment inside it is a filled silhouette, not a drawing, so
+   it holds up at this size where a 3px pen would swamp it. */
+.line{ display:grid; grid-template-columns:76px 1fr; gap:var(--s18); padding:var(--s18) 0; align-items:start; }
+.line__thumb{
+  width:76px; height:76px; display:grid; place-items:center;
+  border:var(--line) solid var(--ink); background:var(--paper); padding:6px;
+}
+.line__thumb svg{ width:100%; height:auto; color:var(--ink); }
 .line + .line{ border-top:1px solid var(--ink); }
 .line__name{ font-family:var(--display); font-weight:900; font-size:16px; text-transform:uppercase; }
 .line__size{ font-weight:600; font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim-ink); margin-top:var(--s3); }

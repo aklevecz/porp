@@ -54,12 +54,16 @@ function garmentBody() {
     <path d="M650,444 L592,474"/>`;
 }
 
-// The hood: an outer dome over the shoulders, plus the inner edge of the
-// opening, which is what stops it reading as a bonnet.
-function hood() {
+// The hood: an outer dome over the shoulders. From the front you also see the
+// inner edge of the opening, which is what stops it reading as a bonnet; from
+// behind you see the outside of the hood and a seam, and no opening at all —
+// which is the difference that tells the two views apart at a glance.
+function hood({ open = true } = {}) {
   return `
     <path fill="var(--paper,#fff)" d="M314,230 C302,144 344,110 400,110 C456,110 498,144 486,230"/>
-    <path d="M349,236 C341,182 367,158 400,158 C433,158 459,182 451,236"/>`;
+    ${open
+      ? '<path d="M349,236 C341,182 367,158 400,158 C433,158 459,182 451,236"/>'
+      : '<path d="M400,110 L400,230"/>'}`;
 }
 
 // Drawstrings, out of the front edge of the hood opening.
@@ -86,10 +90,10 @@ export const FRONT = `
 export const BACK = `
 <svg viewBox="0 0 800 760" role="img" aria-label="Back of the crop hoodie: the hood from behind, with a small porpoise between the shoulders">
   <g ${STROKE}>
-    ${hood()}
+    ${hood({ open: false })}
     ${garmentBody()}
   </g>
-  ${porpoise({ x: 362, y: 312, scale: 0.19, shadow: false })}
+  ${porpoise({ x: 362, y: 316, scale: 0.19, shadow: false })}
 </svg>`;
 
 // Detail: the chest print at scale. Nothing behind it — an earlier version had
@@ -114,6 +118,39 @@ export const TAG = `
     <text x="400" y="512" font-size="30">YOU HAVE</text>
     <text x="400" y="548" font-size="30">NO PORPOISE</text>
   </g>
+</svg>`;
+
+// The garment as a solid silhouette, for the cart line. A stroked drawing
+// cannot survive a 72px thumb — the page's 3px pen is proportionally four
+// times too heavy there — but a filled shape can, and a Paper-on-Ink
+// silhouette is already how the porpoise reads in the client's own file.
+export const GARMENT_MARK = `
+<svg viewBox="124 100 552 409" aria-hidden="true" focusable="false">
+  <g fill="currentColor">
+    <path d="M314,230 C302,144 344,110 400,110 C456,110 498,144 486,230 Z"/>
+    <path d="
+      M320,228
+      C300,231 282,238 262,250
+      C218,316 172,378 134,450
+      C130,458 133,467 141,471
+      L195,499
+      C203,503 213,500 217,492
+      C236,458 258,428 280,404
+      C276,424 274,442 276,458
+      L524,458
+      C526,442 524,424 520,404
+      C542,428 564,458 583,492
+      C587,500 597,503 605,499
+      L659,471
+      C667,467 670,458 666,450
+      C628,378 582,316 538,250
+      C518,238 500,231 480,228
+      C472,258 448,272 400,272
+      C352,272 328,258 320,228
+      Z"/>
+  </g>
+  <!-- the hood opening, punched back out so it still reads as a hood -->
+  <path fill="var(--paper,#fff)" d="M349,236 C341,182 367,158 400,158 C433,158 459,182 451,236 Z"/>
 </svg>`;
 
 export const VIEWS = [

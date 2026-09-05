@@ -10,6 +10,8 @@ import { PRODUCT, SHIPPING, FAQ } from './product.js';
 import { money } from './cart.js';
 import { VIEWS, FRONT, STICKER, SILHOUETTE } from './art.js';
 
+export const SITE = 'https://youhavenoporpoise.com';
+
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]
 ));
@@ -64,6 +66,40 @@ export const CONTENT = {
     }).join('');
   })(),
 };
+
+// Product structured data, built from the same source as the page, so the
+// price and availability a search engine shows can never drift from what the
+// cart actually charges.
+CONTENT.jsonld = `<script type="application/ld+json">${JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: PRODUCT.name,
+  description:
+    '425 gsm of organic cotton loopback, cut short, hood lined, printed on the chest. It is the only thing we make.',
+  image: [`${SITE}/og.png`],
+  brand: { '@type': 'Brand', name: 'PORP' },
+  material: '100% organic cotton',
+  offers: {
+    '@type': 'Offer',
+    url: `${SITE}/`,
+    priceCurrency: 'USD',
+    price: (PRODUCT.priceCents / 100).toFixed(2),
+    availability: 'https://schema.org/InStock',
+    shippingDetails: {
+      '@type': 'OfferShippingDetails',
+      shippingRate: { '@type': 'MonetaryAmount', value: '0', currency: 'USD' },
+      shippingDestination: { '@type': 'DefinedRegion', addressCountry: 'US' },
+    },
+    hasMerchantReturnPolicy: {
+      '@type': 'MerchantReturnPolicy',
+      applicableCountry: 'US',
+      returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+      merchantReturnDays: 30,
+      returnMethod: 'https://schema.org/ReturnByMail',
+      returnFees: 'https://schema.org/FreeReturn',
+    },
+  },
+}).replace(/</g, '\\u003c')}</` + `script>`;
 
 // Replaces <!--@key--> placeholders in index.html.
 export function injectContent(html) {
