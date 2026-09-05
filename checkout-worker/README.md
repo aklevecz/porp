@@ -65,6 +65,19 @@ The Worker is the only authority on price and availability:
 `CATALOGUE.priceCents` must be kept in step with `src/shop/product.js`. That file
 is what the page *displays*; this one is what the shopper is actually charged.
 
+## Sharing a Stripe account with another site
+
+Fine, and common — one Stripe account can sell more than one thing. Two things
+worth knowing if you reuse an existing account:
+
+- Charges land in the same dashboard and the same payouts as whatever else that
+  account sells. Filter by the `sizes` metadata or the charge description to tell
+  hoodie orders apart.
+- The Worker sets `statement_descriptor_suffix: 'PORP'`, so the charge reads as
+  your account's prefix plus PORP on the customer's card statement rather than
+  as an unrelated business. That prefix is set once under
+  **Stripe → Settings → Business → Public details**.
+
 ## Known limitation
 
 Stripe Checkout shows every shipping option regardless of the address entered, so

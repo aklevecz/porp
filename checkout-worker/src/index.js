@@ -129,6 +129,14 @@ function sessionParams(lines, siteUrl) {
     })),
     // So the order is fulfillable without a second lookup.
     metadata: { sizes: lines.map((l) => `${l.size}x${l.qty}`).join(',') },
+    payment_intent_data: {
+      // This Stripe account may also be selling something else entirely. Without
+      // this, a hoodie charge shows up on the customer's statement under
+      // whatever the account's default descriptor is, which reads as a stranger
+      // billing them and is a common cause of chargebacks.
+      statement_descriptor_suffix: 'PORP',
+      description: `${CATALOGUE.name} — ${lines.map((l) => `${l.size}x${l.qty}`).join(', ')}`,
+    },
   };
 }
 
