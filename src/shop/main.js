@@ -1,6 +1,6 @@
 import { PRODUCT } from './product.js';
 import { Cart, money, MAX_PER_SIZE } from './cart.js';
-import { isConfigured, checkoutUrl } from './checkout.js';
+import { isConfigured, createCheckout } from './checkout.js';
 import { MARK, GARMENT_MARK } from './art.js';
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -294,13 +294,11 @@ function renderCart() {
   // Honest hand-off: when no store is wired up the button is replaced by an
   // explanation, not disabled. A disabled button explains nothing.
   $('[data-checkout-slot]').innerHTML = isConfigured()
-    ? '<a class="cta press" data-checkout-go>Checkout</a>'
+    ? '<div data-checkout-error></div>' +
+      '<button type="button" class="cta press" data-checkout-go>Checkout</button>'
     : '<p class="notwired">Checkout is not wired up yet. Email ' +
       '<a href="mailto:hello@youhavenoporpoise.com">hello@youhavenoporpoise.com</a>' +
       ' and we will sort it out.</p>';
-
-  const go = $('[data-checkout-go]');
-  if (go) go.href = checkoutUrl(snap.lines) || '#';
 
   restoreFocus(hadFocus);
 }
@@ -319,6 +317,35 @@ function showUndo(size, qty) {
   const el = $('[data-undo]');
   el.hidden = false;
   el.innerHTML = `<button type="button" class="txtbtn" data-undo-go>Undo removing size ${size}</button>`;
+}
+
+/* Handing off to Stripe means a network round trip and then a full page
+   navigation, so the button has to say it is working — otherwise people press
+   it twice. On failure we stay put and explain, rather than dumping them on a
+   dead page. */
+let checkingOut = false;
+
+async function startCheckout(button) {
+  if (checkingOut) return;
+  checkingOut = true;
+  const label = button.textContent;
+  button.disabled = true;
+  button.textContent = 'Taking you to Stripe…';
+  $('[data-checkout-error]').innerHTML = '';
+  announce('Starting checkout.');
+
+  try {
+    const url = await createCheckout(cart.lines);
+    location.assign(url);            // deliberately no reset: they may come back
+  } catch (err) {
+    checkingOut = false;
+    button.disabled = false;
+    button.textContent = label;
+    const slot = $('[data-checkout-error]');
+    if (slot) slot.innerHTML = `<p class="sizeerr" role="alert">${err.message}</p>`;
+    announce(err.message);
+    button.focus();
+  }
 }
 
 /* ── drawer ──────────────────────────────────────────────────────────── */
@@ -456,6 +483,11 @@ function initEvents() {
       announce(`Removed. ${PRODUCT.name}, size ${size}.`);
       return;
     }
+    const goBtn = t.closest('[data-checkout-go]');
+    if (goBtn) {
+      void startCheckout(goBtn);
+      return;
+    }
     if (t.closest('[data-undo-go]') && lastRemoved) {
       cart.add(lastRemoved.size, lastRemoved.qty);
       lastRemoved = null;
@@ -486,6 +518,37 @@ function initEvents() {
   new ResizeObserver(relayout).observe($('.column'));
 }
 
+/* Returning from Stripe. On success the cart has been paid for, so it must not
+   still be sitting in localStorage waiting to be bought again. */
+function handleReturn() {
+  const state = new URLSearchParams(location.search).get('checkout');
+  if (!state) return;
+  if (state === 'success') {
+    cart.clear();
+    showBanner('Thank you — your order is in. A receipt is on its way by email.');
+  } else if (state === 'cancelled') {
+    showBanner('Checkout cancelled. Your cart is still here.');
+  }
+  // Drop the parameter so a refresh does not repeat the message.
+  history.replaceState(null, '', location.pathname);
+}
+
+function showBanner(text) {
+  const el = document.createElement('div');
+  el.className = 'banner';
+  el.setAttribute('role', 'status');
+  el.innerHTML = `<p>${text}</p>
+    <button type="button" class="txtbtn" data-banner-close>Dismiss</button>`;
+  document.querySelector('.header').after(el);
+  el.querySelector('[data-banner-close]').addEventListener('click', () => {
+    el.remove();
+    // The banner sits above the sheet, so removing it moves every block up.
+    // The deleted rows are computed from block positions, so recompute them or
+    // the clear bands end up half a row off.
+    layoutField();
+  });
+}
+
 /* ── boot ────────────────────────────────────────────────────────────── */
 
 pressParity();
@@ -494,6 +557,7 @@ initEvents();
 initStickyBar();
 setQty(1, { silent: true });
 renderCart();
+handleReturn();
 
 // The field can only be fitted and cut once the real face has loaded, since
 // both passes are measurements of rendered text.

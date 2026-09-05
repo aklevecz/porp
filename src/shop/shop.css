@@ -416,6 +416,18 @@ main{ display:flex; flex-direction:column; gap:var(--s96); }
 
 .subtotal{ display:flex; align-items:baseline; justify-content:space-between; }
 .subtotal__n{ font-size:30px; font-variant-numeric:tabular-nums; }
+/* Returning from Stripe: a plain Paper strip under the header, framed with the
+   same 3px pen as everything else. */
+.banner{
+  position:relative; z-index:35;
+  display:flex; align-items:center; justify-content:space-between; gap:var(--s18);
+  flex-wrap:wrap;
+  background:var(--paper); border-bottom:var(--line) solid var(--ink);
+  padding:var(--s18) var(--s24);
+  font-weight:500; font-size:15px;
+}
+
+[data-checkout-slot] .cta{ margin-bottom:9px; }
 .notwired{
   border:var(--line) solid var(--ink); padding:var(--s18);
   margin-top:var(--s24); font-size:15px; line-height:1.5;

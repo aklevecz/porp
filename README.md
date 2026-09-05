@@ -63,12 +63,17 @@ src/shop/
 so the page is complete and readable with JavaScript switched off. JS only adds the
 field passes and the cart.
 
-## Wiring up checkout
+## Checkout
 
-There is no payment backend here, and the page says so plainly rather than faking a
-purchase. Point `CHECKOUT.baseUrl` in `src/shop/checkout.js` at a Shopify cart permalink
-or a Stripe payment link and fill in `variantIds`; the drawer swaps the explanation for
-a real Checkout button on its own.
+Checkout runs through Stripe. Because a Checkout Session must be created with a
+secret key — and because the browser can never be trusted to say what something
+costs — the cart is posted to a small Cloudflare Worker in `checkout-worker/`,
+which owns the catalogue, prices the order and returns a Stripe URL.
+
+It is not connected until you deploy that Worker and set `workerUrl` in
+`src/shop/checkout.js`. Until then the drawer says so plainly rather than showing
+a dead button. See [checkout-worker/README.md](checkout-worker/README.md) — it is
+two commands, and needs nothing set up inside Stripe.
 
 ## Product drawings
 

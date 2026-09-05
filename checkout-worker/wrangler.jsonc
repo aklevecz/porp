@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "porp-checkout",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-04",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true,
+    "logs": { "head_sampling_rate": 1 }
+  },
+  "vars": {
+    // Origins allowed to create a checkout session. Comma separated.
+    "ALLOWED_ORIGINS": "https://youhavenoporpoise.com,http://localhost:5173",
+    // Where Stripe returns the shopper afterwards.
+    "SITE_URL": "https://youhavenoporpoise.com"
+  }
+  // STRIPE_SECRET_KEY is a secret, never a var:
+  //   npx wrangler secret put STRIPE_SECRET_KEY
+}

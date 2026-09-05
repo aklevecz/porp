@@ -2,3 +2,5 @@ node_modules/
 dist/
 .DS_Store
 *.log
+checkout-worker/node_modules/
+checkout-worker/.wrangler/
